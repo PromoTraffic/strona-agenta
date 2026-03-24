@@ -26,7 +26,7 @@ export function ToolsGrid({ tools }: ToolsGridProps) {
             rozwoju produktu.
           </p>
         </div>
-        <ul className="mt-12 grid list-none grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+        <ul className="mt-12 flex list-none flex-col gap-4 sm:gap-5">
           {tools.map((tool) => (
             <li key={tool.id}>
               <ToolCard tool={tool} />
