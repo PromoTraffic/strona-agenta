@@ -2,6 +2,9 @@
   "name": "promotraffic-ai-landing",
   "version": "0.1.0",
   "private": true,
+  "exports": {
+    "./header": "./shared/PromoTrafficAppHeader.tsx"
+  },
   "scripts": {
     "dev": "node -e \"require('fs').mkdirSync('data',{recursive:true})\" && next dev",
     "build": "node -e \"require('fs').mkdirSync('data',{recursive:true})\" && prisma generate && next build",

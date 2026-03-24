@@ -1,20 +1,40 @@
 # Jak dodać pasek PromoTraffic do innego narzędzia
 
-## Krok 1: Skopiuj komponent
+## Automatyczna aktualizacja listy narzędzi
 
-Skopiuj plik `PromoTrafficAppHeader.tsx` do swojego projektu (np. do `components/`).
+Lista narzędzi jest **pobierana automatycznie** z API strony agenta przy każdym załadowaniu. Wystarczy dodać/edytować narzędzia w panelu admina strony agenta — inne narzędzia zobaczą zmiany bez redeployu.
 
-## Krok 2: Zmienne środowiskowe
+---
+
+## Opcja A: Instalacja z GitHub (bez kopiowania)
+
+```bash
+npm install github:PromoTraffic/strona-agenta
+```
+
+Import:
+
+```tsx
+import { PromoTrafficAppHeader } from "promotraffic-ai-landing/header";
+```
+
+## Opcja B: Ręczne kopiowanie
+
+Skopiuj plik `shared/PromoTrafficAppHeader.tsx` do swojego projektu (np. do `components/`).
+
+---
+
+## Krok 2: Zmienna środowiskowa
 
 W `.env` lub w Coolify dodaj:
 
 ```
-NEXT_PUBLIC_TOOLS_JSON=[{"id":"mediapulse","name":"MediaPulse","description":"...","url":""},{"id":"product-gen","name":"PROduct GEN","description":"...","url":"https://product-gen.example.com"},...]
 NEXT_PUBLIC_LANDING_URL=https://agent.promotraffic.pl
 ```
 
-- **NEXT_PUBLIC_TOOLS_JSON** — ten sam JSON co na stronie agenta (lista narzędzi)
-- **NEXT_PUBLIC_LANDING_URL** — adres strony agenta (landing + admin)
+- **NEXT_PUBLIC_LANDING_URL** — adres strony agenta (landing). Nagłówek pobiera listę narzędzi z `{URL}/api/content?key=tools`.
+
+Opcjonalnie **NEXT_PUBLIC_TOOLS_JSON** — fallback, gdy API niedostępne (np. podczas budowania).
 
 ## Krok 3: Kolory Tailwind (jeśli ich nie masz)
 
