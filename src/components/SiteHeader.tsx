@@ -1,10 +1,13 @@
 import Link from "next/link";
+import type { Tool } from "@/lib/tools";
+import { ToolsNavDropdown } from "./ToolsNavDropdown";
 
 type SiteHeaderProps = {
   primarySiteUrl?: string;
+  tools?: Tool[];
 };
 
-export function SiteHeader({ primarySiteUrl }: SiteHeaderProps) {
+export function SiteHeader({ primarySiteUrl, tools = [] }: SiteHeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b border-pt-border/30 bg-pt-black-deep/90 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -32,12 +35,7 @@ export function SiteHeader({ primarySiteUrl }: SiteHeaderProps) {
           >
             O agencie
           </a>
-          <a
-            href="#narzedzia"
-            className="rounded-md bg-pt-yellow px-3 py-1.5 font-medium text-pt-black-deep transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-pt-yellow"
-          >
-            Narzędzia
-          </a>
+          <ToolsNavDropdown tools={tools} variant="header" />
         </nav>
       </div>
     </header>

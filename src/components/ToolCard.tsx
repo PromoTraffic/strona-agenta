@@ -10,7 +10,7 @@ export function ToolCard({ tool }: ToolCardProps) {
   const isExternal = hasUrl && /^https?:\/\//i.test(href);
 
   return (
-    <article className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-pt-border/50 bg-gradient-to-b from-pt-surface/80 to-pt-black/90 p-6 shadow-lg backdrop-blur-sm transition-all hover:border-pt-yellow/50 hover:shadow-xl hover:shadow-pt-yellow/5 sm:flex-row sm:items-start sm:gap-6">
+    <article className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-pt-border/50 bg-gradient-to-b from-pt-surface/80 to-pt-black/90 p-6 shadow-lg backdrop-blur-sm transition-all hover:border-pt-yellow/50 hover:shadow-xl hover:shadow-pt-yellow/5 sm:flex-row sm:items-center sm:gap-6">
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[20%] bg-gradient-to-t from-pt-yellow/30 via-pt-yellow/8 to-transparent opacity-90 transition group-hover:opacity-100"
         aria-hidden

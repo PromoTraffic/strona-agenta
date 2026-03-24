@@ -13,7 +13,7 @@ export default async function Home() {
 
   return (
     <div className="pt-page-bg relative z-10 flex min-h-full flex-col">
-      <SiteHeader primarySiteUrl={content.footer.primarySiteUrl} />
+      <SiteHeader primarySiteUrl={content.footer.primarySiteUrl} tools={content.tools} />
       <main className="flex-1">
         <Hero content={content.hero} />
         <About content={content.about} />

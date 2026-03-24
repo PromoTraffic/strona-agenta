@@ -23,7 +23,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
   ]);
 
   return (
-    <AdminLayout>
+    <AdminLayout tools={tools}>
       {currentTab === "tools" && (
         <AdminToolsEditor initialTools={tools} />
       )}

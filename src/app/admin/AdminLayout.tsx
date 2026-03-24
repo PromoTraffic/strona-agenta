@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import type { Tool } from "@/lib/tools";
+import { ToolsNavDropdown } from "@/components/ToolsNavDropdown";
 import { AdminTabs } from "./AdminTabs";
 
 function LogoutButton() {
@@ -24,16 +26,18 @@ function LogoutButton() {
 
 type AdminLayoutProps = {
   children: React.ReactNode;
+  tools?: Tool[];
 };
 
-export function AdminLayout({ children }: AdminLayoutProps) {
+export function AdminLayout({ children, tools = [] }: AdminLayoutProps) {
   return (
     <div className="pt-page-bg min-h-screen">
       <header className="border-b border-pt-border/40 bg-pt-black/90 px-4 py-4 sm:px-6">
         <div className="mx-auto flex max-w-4xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-lg font-semibold text-white">Panel administracyjny</h1>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             <AdminTabs />
+            <ToolsNavDropdown tools={tools} variant="admin" />
             <Link
               href="/#narzedzia"
               className="text-sm text-pt-yellow transition hover:text-pt-yellow/80"

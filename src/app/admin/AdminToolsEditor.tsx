@@ -7,6 +7,9 @@ type AdminToolsEditorProps = {
   initialTools: Tool[];
 };
 
+/** Klucz React — stabilny, nie zmienia się przy edycji (zapobiega utracie focusa) */
+type ToolWithEditKey = Tool & { _editKey: string };
+
 function slugify(text: string): string {
   const pl: Record<string, string> = {
     ą: "a", ć: "c", ę: "e", ł: "l", ń: "n", ó: "o", ś: "s", ź: "z", ż: "z",
@@ -21,19 +24,28 @@ function slugify(text: string): string {
     || "narzedzie";
 }
 
+function withEditKey(tool: Tool, editKey: string): ToolWithEditKey {
+  return { ...tool, _editKey: editKey };
+}
+
 export function AdminToolsEditor({ initialTools }: AdminToolsEditorProps) {
-  const [tools, setTools] = useState<Tool[]>(initialTools);
+  const [tools, setTools] = useState<ToolWithEditKey[]>(() =>
+    initialTools.map((t, i) => withEditKey(t, `tool-${i}-${t.id}`))
+  );
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const addTool = useCallback(() => {
-    const newTool: Tool = {
-      id: `narzedzie-${Date.now()}`,
-      name: "Nowe narzędzie",
-      description: "Opis — edytuj tutaj.",
-      url: "",
-    };
+    const newTool: ToolWithEditKey = withEditKey(
+      {
+        id: `narzedzie-${Date.now()}`,
+        name: "Nowe narzędzie",
+        description: "Opis — edytuj tutaj.",
+        url: "",
+      },
+      `tool-new-${Date.now()}`,
+    );
     setTools((prev) => [...prev, newTool]);
     setFeedback("Dodano narzędzie. Ustaw nazwę i ID (sluge).");
   }, []);
@@ -42,7 +54,12 @@ export function AdminToolsEditor({ initialTools }: AdminToolsEditorProps) {
     (index: number, field: keyof Tool, value: string) => {
       setTools((prev) => {
         const next = [...prev];
-        const t = { ...next[index], [field]: value };
+        const current = next[index];
+        const t: ToolWithEditKey = {
+          ...current,
+          [field]: value,
+          _editKey: current._editKey,
+        };
         if (field === "name") {
           t.id = slugify(value) || t.id;
         }
@@ -87,11 +104,14 @@ export function AdminToolsEditor({ initialTools }: AdminToolsEditorProps) {
   const saveToDb = useCallback(async () => {
     setSaving(true);
     setFeedback(null);
-    try {
+      try {
       const res = await fetch("/api/content", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: "tools", value: tools }),
+        body: JSON.stringify({
+          key: "tools",
+          value: tools.map(({ _editKey: _, ...t }) => t),
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -139,7 +159,7 @@ export function AdminToolsEditor({ initialTools }: AdminToolsEditorProps) {
       <div className="space-y-6">
         {tools.map((tool, index) => (
           <article
-            key={tool.id}
+            key={tool._editKey}
             className="rounded-xl border border-pt-border/60 bg-pt-surface/60 p-6"
           >
             <div className="mb-4 flex items-center justify-between">
