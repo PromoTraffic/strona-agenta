@@ -3,35 +3,38 @@
 /**
  * Nagłówek do wklejenia w inne narzędzia (PROduct GEN, MediaPulse itd.)
  *
+ * Lista narzędzi jest pobierana AUTOMATYCZNIE z API strony agenta (GET /api/content?key=tools).
+ * Wystarczy ustawić NEXT_PUBLIC_LANDING_URL — nie musisz ręcznie aktualizować NEXT_PUBLIC_TOOLS_JSON.
+ *
  * INSTRUKCJA:
  * 1. Skopiuj ten plik do projektu narzędzia
- * 2. Upewnij się, że masz Tailwind z kolorami:
- *    --pt-black, --pt-yellow, --pt-muted, --pt-light, --pt-surface, --pt-border
- * 3. Ustaw zmienne środowiskowe:
- *    - NEXT_PUBLIC_TOOLS_JSON (lista narzędzi - ten sam JSON co na stronie agenta)
- *    - NEXT_PUBLIC_LANDING_URL (URL strony agenta, np. https://agent.promotraffic.pl)
- * 4. Użyj: <PromoTrafficAppHeader user={user} /> w layoutcie
+ * 2. Ustaw NEXT_PUBLIC_LANDING_URL (URL strony agenta, np. https://agent.promotraffic.pl)
+ * 3. Użyj: <PromoTrafficAppHeader user={user} onLogout={...} />
  */
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type Tool = { id: string; name: string; description: string; url: string };
+
+function normalizeTools(arr: unknown[]): Tool[] {
+  return arr
+    .filter((o): o is Record<string, unknown> => o != null && typeof o === "object")
+    .map((o) => ({
+      id: String(o.id ?? "").trim() || "?",
+      name: String(o.name ?? "").trim() || "?",
+      description: String(o.description ?? "").trim(),
+      url: String(o.url ?? "").trim(),
+    }))
+    .filter((t) => t.id && t.name);
+}
 
 function parseToolsFromEnv(): Tool[] {
   const raw = process.env.NEXT_PUBLIC_TOOLS_JSON?.trim();
   if (!raw) return [];
   try {
     const arr = JSON.parse(raw) as unknown[];
-    if (!Array.isArray(arr)) return [];
-    return arr
-      .filter((o): o is Record<string, unknown> => o && typeof o === "object")
-      .map((o) => ({
-        id: String(o.id ?? "").trim() || "?",
-        name: String(o.name ?? "").trim() || "?",
-        description: String(o.description ?? "").trim(),
-        url: String(o.url ?? "").trim(),
-      }))
-      .filter((t) => t.id && t.name);
+    return Array.isArray(arr) ? normalizeTools(arr) : [];
   } catch {
     return [];
   }
@@ -55,8 +58,21 @@ export function PromoTrafficAppHeader({
   onLogout,
   landingUrl,
 }: PromoTrafficAppHeaderProps) {
-  const tools = parseToolsFromEnv();
   const baseUrl = landingUrl || getLandingUrl();
+  const [tools, setTools] = useState<Tool[]>(() => parseToolsFromEnv());
+
+  useEffect(() => {
+    const apiUrl = `${baseUrl.replace(/\/$/, "")}/api/content?key=tools`;
+    fetch(apiUrl)
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setTools(normalizeTools(data));
+        }
+      })
+      .catch(() => {});
+  }, [baseUrl]);
+
   const allToolsHref = baseUrl + (baseUrl.endsWith("/") ? "" : "/") + "#narzedzia";
 
   return (
@@ -70,7 +86,7 @@ export function PromoTrafficAppHeader({
             PromoTraffic
           </Link>
           <Link
-            href={`${baseUrl}/admin`}
+            href={`${baseUrl.replace(/\/$/, "")}/admin`}
             className="rounded-lg border border-[var(--pt-yellow,#ffd500)] px-3 py-1.5 text-sm font-medium text-[var(--pt-yellow,#ffd500)] transition hover:bg-[var(--pt-yellow,#ffd500)]/10 focus:outline focus:outline-2 focus:outline-offset-2"
           >
             Panel główny
