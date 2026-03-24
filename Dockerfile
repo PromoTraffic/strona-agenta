@@ -15,7 +15,7 @@ RUN npm run build
 
 # Run (standalone)
 FROM node:20-alpine AS runner
-RUN apk add --no-cache openssl su-exec
+RUN apk add --no-cache openssl
 
 WORKDIR /app
 
@@ -25,18 +25,15 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
 
-RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
-RUN npm install prisma --omit=dev --ignore-scripts && chown -R nextjs:nodejs /app/node_modules
+RUN mkdir -p /app/data
+RUN npm install prisma --omit=dev --ignore-scripts
 
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
