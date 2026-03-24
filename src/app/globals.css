@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+:root {
+  --pt-black-deep: #0b0b0b;
+  --pt-black: #0f0f0f;
+  --pt-surface: #1c1c1c;
+  --pt-border: #5d6062;
+  --pt-muted: #8f9599;
+  --pt-light: #c1cacf;
+  --pt-yellow: #ffd500;
+}
+
+@theme inline {
+  --color-pt-black-deep: var(--pt-black-deep);
+  --color-pt-black: var(--pt-black);
+  --color-pt-surface: var(--pt-surface);
+  --color-pt-border: var(--pt-border);
+  --color-pt-muted: var(--pt-muted);
+  --color-pt-light: var(--pt-light);
+  --color-pt-yellow: var(--pt-yellow);
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--pt-black-deep);
+  color: var(--pt-light);
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Nowoczesne tło: gradient mesh + subtelna siatka */
+.pt-page-bg {
+  background-color: var(--pt-black-deep);
+  background-image:
+    radial-gradient(
+      ellipse 100% 80% at 20% 10%,
+      rgba(255, 213, 0, 0.08),
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse 80% 60% at 80% 20%,
+      rgba(255, 213, 0, 0.05),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse 90% 50% at 50% 90%,
+      rgba(143, 149, 153, 0.04),
+      transparent 50%
+    ),
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(11, 11, 11, 0.3) 50%,
+      transparent 100%
+    );
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  position: relative;
+}
+
+/* Siatka punktów — technologiczny klimat */
+.pt-page-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(93, 96, 98, 0.12) 1px,
+    transparent 0
+  );
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Animacja subtelnego pulsowania poświaty */
+@keyframes pt-glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.pt-glow-animate {
+  animation: pt-glow-pulse 4s ease-in-out infinite;
+}

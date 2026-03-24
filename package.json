@@ -1,0 +1,32 @@
+{
+  "name": "promotraffic-ai-landing",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node -e \"require('fs').mkdirSync('data',{recursive:true})\" && next dev",
+    "build": "node -e \"require('fs').mkdirSync('data',{recursive:true})\" && prisma generate && next build",
+    "start": "node -e \"require('fs').mkdirSync('data',{recursive:true})\" && next start",
+    "lint": "eslint",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "bcryptjs": "^3.0.3",
+    "iron-session": "^8.0.4",
+    "next": "16.2.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "prisma": "5.22.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
