@@ -15,7 +15,7 @@ RUN npm run build
 
 # Run (standalone)
 FROM node:20-alpine AS runner
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl su-exec
 
 WORKDIR /app
 
@@ -38,8 +38,9 @@ COPY --from=builder /app/package-lock.json ./
 RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
 RUN npm install prisma --omit=dev --ignore-scripts && chown -R nextjs:nodejs /app/node_modules
 
-USER nextjs
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "if [ -n \"$DATABASE_URL\" ]; then npx prisma migrate deploy; fi && exec node server.js"]
+ENTRYPOINT ["/entrypoint.sh"]
