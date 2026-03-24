@@ -1,8 +1,12 @@
 # Build
 FROM node:20-alpine AS builder
+# OpenSSL dla Prisma na Alpine
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
+COPY prisma ./prisma
 RUN npm ci
 
 COPY . .
