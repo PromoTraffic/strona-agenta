@@ -15,6 +15,8 @@ RUN npm run build
 
 # Run (standalone)
 FROM node:20-alpine AS runner
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -29,9 +31,15 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/package-lock.json ./
+
+RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
+RUN npm install prisma --omit=dev --ignore-scripts && chown -R nextjs:nodejs /app/node_modules
 
 USER nextjs
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "if [ -n \"$DATABASE_URL\" ]; then npx prisma migrate deploy; fi && exec node server.js"]

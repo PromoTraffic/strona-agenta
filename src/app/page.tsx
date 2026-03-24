@@ -6,6 +6,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { ToolsGrid } from "@/components/ToolsGrid";
 import { getAllContent } from "@/lib/content";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const content = await getAllContent();
 

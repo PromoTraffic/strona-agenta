@@ -1,4 +1,6 @@
 import { getContent } from "@/lib/content";
+
+export const dynamic = "force-dynamic";
 import { AdminLayout } from "./AdminLayout";
 import { AdminToolsEditor } from "./AdminToolsEditor";
 import { AdminContentEditor } from "./AdminContentEditor";
